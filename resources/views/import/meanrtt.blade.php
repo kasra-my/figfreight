@@ -39,6 +39,13 @@
 
             {{$data->links()}}
         </div>
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4">
+                <a href="#" id="export" type="button" class="btn btn-default"> Export table as CSV file </a>
+            </div>
+            <div class="col-4"></div>
+        </div>
     </div>
         
    </body>

@@ -37,6 +37,9 @@ class ImportController extends Controller
     */
     private $rttCollection;
 
+    /*
+    * Simply return import screen for user to upload the files
+    */
    public function importFiles()
    {
        return view('import.results');
@@ -44,6 +47,7 @@ class ImportController extends Controller
     
     /*
     * Upload CSV files to /public/uploads
+    * Also import them to database
     */
    public function uploadFiles(Request $request)
    {
@@ -62,7 +66,7 @@ class ImportController extends Controller
        $ettFile->move($savePath, ImportController::ETTFILE);
        $rttFile->move($savePath, ImportController::RTTFILE);
        
-       // import to DB       
+       // import to DB, etts table      
        $this->ettCollection = (new FastExcel)->import($savePath.ImportController::ETTFILE, function ($line) {
             return EttModel::create([
                 'zone_from' => $line['zone_from'],
@@ -71,6 +75,7 @@ class ImportController extends Controller
             ]);
        });
        
+       // import to DB, rtts table 
        $this->rttCollection = (new FastExcel)->import($savePath.ImportController::RTTFILE, function ($line) {
             return RttModel::create([
                 'zone_from' => $line['zone_from'],
@@ -90,14 +95,14 @@ class ImportController extends Controller
     * Parse CSV files and return results as json 
     * for ajax call
     */
-    public function processFiles(/*Request $request*/)
+    public function processFiles()
     {
         
         $tableResultes =[];
         
         $ettCollection = EttModel::all()->sortBy('zone_from')->sortBy('zone_to');
       
-       //loop through ETT
+       //loop through ETTS collection
        foreach($ettCollection as $key => $ett){
          
            $ettFrom =trim(str_replace('"', "", $ett[ImportController::ZONEFROM]));
@@ -118,7 +123,7 @@ class ImportController extends Controller
         
        EttrttModel::truncate();
         
-       // import to DB   
+       // import to DB, ettrtts table   
         foreach($tableResultes as $res){
             EttrttModel::create([
                 'zone_from' => $res['zone_from'],
@@ -129,18 +134,25 @@ class ImportController extends Controller
         }        
         
         $data = DB::table('ettrtts')->paginate(30);
+        
         return view('import.meanrtt',['data' => $data] );
     
     }
 
+    /*
+    * Calculate all peer mean RTTS values to ETTS table
+    */
     private function calculateMean($ettFrom, $ettTo, $ettDays)
     {
         // All delivered_at - dispatched_at is saved in this array
         $durations = [];
-
+        
+        // Fetch only the rows from RTTS table that have same 
+        // zone_from and zone_to with ETTS table
         $Rttcollection = RttModel::where('zone_from', '=', $ettFrom)
             ->where('zone_to', '=', $ettTo)->get();
         
+        // Loop through the return collection and calculatio the mean value
         foreach($Rttcollection as $col){
             
             $durations[] = $this->calDateTimeDifference( trim(str_replace('"', "", $col->dispached_at)), trim(str_replace('"', "", $col->delivered_at))  );
