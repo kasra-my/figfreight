@@ -10,6 +10,12 @@
   crossorigin="anonymous"></script>
     <div class="container">
         <div class="row">
+            <h3> The third column (ETT) shows the estimated time taken from ETT 
+                <br>
+                The forth colum (mean RTT) is the average value of all correspoing rows in RTT with ETT
+            </h3>
+        </div>
+        <div class="row">
             <table class="table">
               <thead>
                 <tr>

@@ -101,7 +101,7 @@ class ImportController extends Controller
         $tableResultes =[];
         
         $ettCollection = EttModel::all()->sortBy('zone_from')->sortBy('zone_to');
-      
+ $counter = 0;     
        //loop through ETTS collection
        foreach($ettCollection as $key => $ett){
          

@@ -62,19 +62,21 @@
                 <div class="col-4">
                   <button type="submit" id="submit" class="btn btn-primary">Upload Files</button>
                     <br><br>
+                    <div id="importDb" style="color:blue; display:none;"> 
+                        <h3>
+                            It takes about 5-10 minutes to import both CSV files into database using FASTEXCEL package...
+                        </h3> 
+                        <br>
+                    </div>
+                    <br><br>
+                    
                     <h3>If you don't want to upload CSV files to save time and test it quickly, you can simply click the "Calculate mean" button to calculate the mean RTT and create the table. I already imported the CSV file into database</h3>
                     <br><br>
                 <a href="/processcsv" type="button" class="btn btn-info">Calculate mean</a>
                 </div>
                 <div class="col-4"></div>
             </div>
-            <div id="importDb" style="color:blue; display:none;"> 
-                <h3>
-                    It takes about 5-10 minutes to import both CSV files into database using FASTEXCEL package...
-                </h3> 
-                <br>
-            </div>
-            
+        
             </div>
         </form>
         
